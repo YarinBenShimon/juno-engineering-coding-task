@@ -1,4 +1,4 @@
-import { render, screen, } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { fetchImageUrls } from '../api';
 import ImageCarousel from './ImageCarousel';
 

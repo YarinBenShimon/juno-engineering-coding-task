@@ -3,40 +3,50 @@ import { allIds, fetchOrderById } from "../api";
 
 ////////////////////////////////// Your code tasks is below //////////////////////////////////////////////////////
 
-const fetchAllOrders = () => {
+const fetchAllOrders = async () => {
     const ids = allIds;
-    // .....
-    //   1. TODO: fetch all ids using the "fetchOrderById" and the given ids, make it work as efficient and clean as possible.
+    return await Promise.all(
+        ids.map(async id => await fetchOrderById(id))
+    )
 };
 
-const bucketOrdersByUsers = () => {
+const bucketOrdersByUsers = async () => {
     let ordersByUsers = {};
-    //   2. TODO: using the function from section 1 you should now bucket the orders by user.
-    // each key in the object (ordersByUsers) represents a userId and each value is an array of the orders of that user.
+    const allOrders = await fetchAllOrders();
+    allOrders.forEach(order => {
+        if(!ordersByUsers[order.userId]) ordersByUsers[order.userId] = [order]
+        else ordersByUsers[order.userId].push(order);
+    })
     return ordersByUsers;
 };
 
-const getLast2WeeksOrders = () => {
-    //   3. TODO: fetch all Ids and return array with only the last 2 weeks orders. make it work as efficient and clean as possible.
+const getLast2WeeksOrders = async () => {
+    const allOrders = await fetchAllOrders();
+    const calculate2Weeks = new Date();
+    calculate2Weeks.setDate(calculate2Weeks.getDate() - 14);
+    return allOrders.filter(order => order.timestamp >= calculate2Weeks.getTime());
 };
 
-const bucketOrdersByDate = () => {
+const bucketOrdersByDate = async () => {
     let ordersByDate = {};
-    //   4. TODO: using the function from section 3 bucket the orders by date.
-    // each key in the object (ordersByDate) represents a day and each value is an array of the orders in that date.
+    const allOrders2Weeks = await getLast2WeeksOrders();
+    allOrders2Weeks.forEach(order => {
+        if(!ordersByDate[order.timestamp]) ordersByDate[order.timestamp] = [order];
+        else ordersByDate[order.timestamp].push(order);
+    })
     return ordersByDate;
 };
 
-fetchAllOrders();
-// .then(console.log);
+fetchAllOrders()
+// .then(res => console.log(res));
 
-bucketOrdersByUsers();
-// .then(console.log);
+bucketOrdersByUsers()
+ //.then(res => console.log(res));
 
-getLast2WeeksOrders();
-// .then(console.log);
+getLast2WeeksOrders()
+//.then(res => console.log(res));
 
-bucketOrdersByDate();
-// .then(console.log);
+bucketOrdersByDate()
+ //.then(res => console.log(res));
 
 ////////////////////////////////////////
